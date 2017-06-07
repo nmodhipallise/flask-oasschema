@@ -1,4 +1,4 @@
-Flask-JsonSchema
+Flask-OASSchema
 ================
 
 JSON request validation for Flask applications.
@@ -46,7 +46,7 @@ reside in the configured folder. It should look like so::
       }
     }
 
-Notice the top level action names. Flask-JsonSchema supports one "path" level so
+Notice the top level action names. Flask-OASSchema supports one "path" level so
 that you can organize related schemas in one file. If you do not wish to use this
 feature you can simply use one schema per file and remove the second parameter
 to the ``@jsonschema.validate`` call.
@@ -55,5 +55,5 @@ to the ``@jsonschema.validate`` call.
 Resources
 ---------
 
-- `Issue Tracker <http://github.com/mattupstate/flask-jsonschema/issues>`_
-- `Code <http://github.com/mattupstate/flask-jsonschema/>`_
+- `Issue Tracker <http://github.com/IlyaSukhanov/flask-jsonschema/issues>`_
+- `Code <http://github.com/IlyaSukhanov/flask-oasschema/>`_

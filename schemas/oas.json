@@ -1,0 +1,48 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "version": "",
+        "title": "json_oasschema",
+        "description": "Example Schema for json_oasschema"
+    },
+    "paths": {
+        "/books": {
+            "post": {
+                "operationId": "POST_books",
+                "parameters": [
+                    {
+                        "name": "body",
+                        "in": "body",
+                        "schema": {
+                            "$ref": "#/definitions/oasschema_book"
+                        }
+                    }
+                ],
+                "responses": {
+                    "default": {
+                        "description": "",
+                        "schema": {}
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "oasschema_book": {
+            "title": "oasschema_book",
+            "type": "object",
+            "properties": {
+                "title": {
+                    "type": "string"
+                },
+                "author": {
+                    "type": "string"
+                }
+            },
+            "required": [
+                "title",
+                "author"
+            ]
+        }
+    }
+}

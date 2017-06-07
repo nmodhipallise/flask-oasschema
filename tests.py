@@ -1,20 +1,19 @@
-
 import os
 import unittest
 
 import simplejson as json
 
 from flask import Flask
-from flask_jsonschema import JsonSchema, ValidationError
+from flask_oasschema import OASSchema, validate_request, ValidationError
 
 app = Flask(__name__)
 app.config['DEBUG'] = True
 app.config['JSONSCHEMA_DIR'] = os.path.join(app.root_path, 'schemas')
-jsonschema = JsonSchema(app)
+jsonschema = OASSchema(app)
 
 
 @app.route('/books', methods=['POST'])
-@jsonschema.validate('books', 'create')
+@validate_request('oas', '/books', 'post')
 def books():
     return 'success'
 
