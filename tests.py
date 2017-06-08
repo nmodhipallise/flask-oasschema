@@ -8,13 +8,13 @@ from flask_oasschema import OASSchema, validate_request, ValidationError
 
 app = Flask(__name__)
 app.config['DEBUG'] = True
-app.config['JSONSCHEMA_DIR'] = os.path.join(app.root_path, 'schemas')
+app.config['OAS_FILE'] = os.path.join(app.root_path, 'schemas', 'oas.json')
 jsonschema = OASSchema(app)
 
 
-@app.route('/books', methods=['POST'])
-@validate_request('oas', '/books', 'post')
-def books():
+@app.route('/books/<isbn>', methods=['POST'])
+@validate_request()
+def books(isbn):
     return 'success'
 
 
@@ -29,18 +29,18 @@ class JsonSchemaTests(unittest.TestCase):
 
     def test_valid_json(self):
         r = client.post(
-            '/books',
+            '/books/0-330-25864-8',
             content_type='application/json',
             data=json.dumps({
-                'title': 'Infinite Jest',
-                'author': 'David Foster Wallace'
+                'title': 'The Hitchhiker\'s Guide to the Galaxy',
+                'author': 'Douglas  Adams'
             })
         )
         self.assertIn('success', r.data)
 
     def test_invalid_json(self):
         r = client.post(
-            '/books',
+            '/books/0-316-92004-5',
             content_type='application/json',
             data=json.dumps({
                 'title': 'Infinite Jest'

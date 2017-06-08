@@ -10,11 +10,11 @@ from setuptools import setup
 
 setup(
     name='Flask-OASSchema',
-    version='0.9.0',
+    version='0.9.1',
     url='https://github.com/IlyaSukhanov/flask-oasschema',
     license='MIT',
     author='Ilya Sukhanov',
-    author_email='Ilya Sukhanov',
+    author_email='ilya@sukhanov.net',
     description='Flask extension for validating JSON requests',
     long_description=__doc__,
     py_modules=['flask_oasschema'],

@@ -6,7 +6,7 @@
         "description": "Example Schema for json_oasschema"
     },
     "paths": {
-        "/books": {
+        "/books/{isbn}": {
             "post": {
                 "operationId": "POST_books",
                 "parameters": [
