@@ -1,59 +1,45 @@
 Flask-OASSchema
 ================
 
-JSON request validation for Flask applications.
+JSON request validation for Flask applications using a JSON Schema specified in a `OpenAPI Specification <https://github.com/OAI/OpenAPI-Specification>`_ (also know as OAS and Swagger).
 
-Place schemas in the specified ``JSONSCHEMA_DIR``. ::
+Validating schema of passed object provides a level of confidence of correctness of data directly proportional to schema strictness. With a good schema, it maybe be possible to use JSON-dict like object as first order models without having to convert them into trusted python objects. Reducing amount of code that needs to be maintained.
 
-    import os
+The `tests <test.py>`_ provide a succinct example of usage as well as an example `OAS schema file <schemas/oas.json>`_. But at high level usage looks as follows::
 
-    from flask import Flask, request
-    from flask_jsonschema import JsonSchema, ValidationError
 
+    from flask import Flask
+    from flask_oasschema import OASSchema, validate_request
+
+    # Configure application
     app = Flask(__name__)
-    app.config['JSONSCHEMA_DIR'] = os.path.join(app.root_path, 'schemas')
 
-    jsonschema = JsonSchema(app)
+    # Specify path to the OAS schema file, in this case schemas/oas.json of
+    # project firectory
+    app.config['OAS_FILE'] = os.path.join(
+        app.root_path,
+        'schemas',
+        'oas.json'
+    )
 
-    @app.errorhandler(ValidationError)
-    def on_validation_error(e):
-        return "error"
+    # Initialize validator
+    jsonschema = OASSchema(app)
 
-    @app.route('/books', methods=['POST'])
-    @jsonschema.validate('books', 'create')
-    def create_book():
-        # create the book
+    # Decorate endpoint with @validate_request()
+    @app.route('/books/<isbn>', methods=['POST'])
+    @validate_request()
+    def books(isbn):
         return 'success'
 
-The schema for the example above should be named ``books.json`` and should
-reside in the configured folder. It should look like so::
+Installation
+------------
 
-    {
-      "create": {
-        "type": "object",
-        "properties": {
-          "title": {},
-          "author": {}
-        },
-        "required": ["title", "author"]
-      },
-      "update": {
-        "type": "object",
-        "properties": {
-          "title": {},
-          "author": {}
-        }
-      }
-    }
+This library is available through `PyPI <https://pypi.python.org/pypi>`_ as `Flask-OASSchema <https://pypi.python.org/pypi/Flask-OASSchema/0.9.1>`_ and as such can be installed with::
 
-Notice the top level action names. Flask-OASSchema supports one "path" level so
-that you can organize related schemas in one file. If you do not wish to use this
-feature you can simply use one schema per file and remove the second parameter
-to the ``@jsonschema.validate`` call.
+    pip install Flask-OASSchema
 
 
-Resources
----------
+Credit
+------
 
-- `Issue Tracker <http://github.com/IlyaSukhanov/flask-jsonschema/issues>`_
-- `Code <http://github.com/IlyaSukhanov/flask-oasschema/>`_
+This project is a fork of `Matt Wright's <mattupstate>`_ project `Flask-JsonSchema <https://github.com/mattupstate/flask-jsonschema>`_ and thus borrows ideas and code. Difference being that Flask-OASSchema works only with OAS (Swagger) style schema spec as opposed to raw json-schema. This allows Flask-OASSchema to locate schema corresponding to endpoing and method without explicit per endpoint configuration.
