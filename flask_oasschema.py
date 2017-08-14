@@ -37,11 +37,11 @@ class OASSchema(object):
         return getattr(self._state, name, None)
 
 
-def extract_schema(schema, uri_path, method):
+def extract_body_schema(schema, uri_path, method):
     prefix = schema.get("basePath")
     if prefix and uri_path.startswith(prefix):
         uri_path = uri_path[len(prefix):]
-    for parameter in schema['paths'][uri_path][method]["parameters"]:
+    for parameter in schema['paths'][uri_path][method].get("parameters", []):
         if parameter.get('in', '') == 'body':
             parameter['schema']['definitions'] = schema['definitions']
             return parameter['schema']
@@ -68,7 +68,9 @@ def validate_request():
             uri_path = request.url_rule.rule.replace("<", "{").replace(">", "}")
             method = request.method.lower()
             schema = current_app.extensions['oas_schema']
-            validate(request.get_json(), extract_schema(schema, uri_path, method))
+            body_schema = extract_body_schema(schema, uri_path, method)
+            if body_schema:
+                validate(request.get_json(), body_schema)
             return fn(*args, **kwargs)
         return decorated
     return wrapper

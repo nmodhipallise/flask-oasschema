@@ -55,5 +55,9 @@ class JsonSchemaTests(unittest.TestCase):
         self.assertIn('error', r.data)
 
     def test_no_params(self):
+        """
+        No parameters are defined in schema so there is nothing to check.
+        Either schema should be defined or decorator shouldn't be used on endpoint
+        """
         r = client.get('/health')
-        self.assertIn('success', r.data)
+        self.assertIn('error', r.data)
