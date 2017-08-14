@@ -18,6 +18,12 @@ def books(isbn):
     return 'success'
 
 
+@app.route('/health', methods=['GET'])
+@validate_request()
+def health():
+    return 'success'
+
+
 @app.errorhandler(ValidationError)
 def on_error(e):
     return 'error'
@@ -47,3 +53,7 @@ class JsonSchemaTests(unittest.TestCase):
             })
         )
         self.assertIn('error', r.data)
+
+    def test_no_params(self):
+        r = client.get('/health')
+        self.assertIn('success', r.data)

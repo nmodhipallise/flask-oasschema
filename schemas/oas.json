@@ -25,6 +25,17 @@
                     }
                 }
             }
+        },
+        "/health": {
+            "get": {
+                "operationId": "GET_health",
+                "responses": {
+                    "default": {
+                        "description": "",
+                        "schema": {}
+                    }
+                }
+            }
         }
     },
     "definitions": {
