@@ -90,9 +90,9 @@ def validate_request():
     def wrapper(fn):
         def convert_type(string_value):
             str_value = string_value.decode('utf8')
-            if str_value.isnumeric():
+            try:
                 return int(string_value)
-            else:
+            except ValueError:
                 return str_value
 
         @wraps(fn)
@@ -101,9 +101,7 @@ def validate_request():
             method = request.method.lower()
             schema = current_app.extensions['oas_schema']
 
-            try:
-                validate(request.get_json(), extract_body_schema(schema, uri_path, method))
-            except ValidationError:
+            if method == 'get':
                 query = dict(urllib.parse.parse_qsl(request.query_string))
                 query = {
                     key.decode('utf8'): convert_type(query[key])
@@ -112,6 +110,8 @@ def validate_request():
                 query_schema = extract_query_schema(schema['paths'][uri_path][method]["parameters"])
 
                 validate(query, query_schema)
+            else:
+                validate(request.get_json(), extract_body_schema(schema, uri_path, method))
 
             return fn(*args, **kwargs)
         return decorated
