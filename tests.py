@@ -14,7 +14,13 @@ jsonschema = OASSchema(app)
 
 @app.route('/books/<isbn>', methods=['POST'])
 @validate_request()
-def books(isbn):
+def books_post(isbn):
+    return 'success'
+
+
+@app.route('/books/<isbn>', methods=['GET'])
+@validate_request()
+def books_get(isbn):
     return 'success'
 
 
@@ -27,7 +33,7 @@ client = app.test_client()
 
 class JsonSchemaTests(unittest.TestCase):
 
-    def test_valid_json(self):
+    def test_valid_json_post(self):
         r = client.post(
             '/books/0-330-25864-8',
             content_type='application/json',
@@ -36,9 +42,9 @@ class JsonSchemaTests(unittest.TestCase):
                 'author': 'Douglas  Adams'
             })
         )
-        self.assertIn('success', r.data)
+        self.assertIn(b'success', r.data)
 
-    def test_invalid_json(self):
+    def test_invalid_json_post(self):
         r = client.post(
             '/books/0-316-92004-5',
             content_type='application/json',
@@ -46,4 +52,22 @@ class JsonSchemaTests(unittest.TestCase):
                 'title': 'Infinite Jest'
             })
         )
-        self.assertIn('error', r.data)
+        self.assertIn(b'error', r.data)
+
+    def test_valid_json_get(self):
+        r = client.get(
+            '/books/0-330-25864-8',
+            query_string={
+                'author': 'Douglas  Adams'
+            }
+        )
+        self.assertIn(b'success', r.data)
+
+    def test_invalid_json_get(self):
+        r = client.get(
+            '/books/0-330-25864-8',
+            query_string={
+                'author': 1234
+            }
+        )
+        self.assertIn(b'error', r.data)

@@ -17,6 +17,7 @@ except ImportError:
 
 from flask import current_app, request
 from jsonschema import ValidationError, validate
+import urllib
 
 
 class OASSchema(object):
@@ -37,7 +38,8 @@ class OASSchema(object):
         return getattr(self._state, name, None)
 
 
-def extract_schema(schema, uri_path, method):
+def extract_body_schema(schema, uri_path, method):
+
     prefix = schema.get("basePath")
     if prefix and uri_path.startswith(prefix):
         uri_path = uri_path[len(prefix):]
@@ -45,7 +47,30 @@ def extract_schema(schema, uri_path, method):
         if parameter.get('in', '') == 'body':
             parameter['schema']['definitions'] = schema['definitions']
             return parameter['schema']
+
     raise ValidationError("Matching schema not found")
+
+
+def extract_query_schema(parameters):
+
+    def schema_property(parameter_definition):
+        schema_keys = ['type', 'format', 'enum']
+        return {
+            key: parameter_definition[key]
+            for key in parameter_definition if key in schema_keys
+        }
+
+    return {
+        'type': 'object',
+        'properties': {
+            parameter['name']: schema_property(parameter)
+            for parameter in parameters if parameter.get('in', '') == 'query'
+        },
+        'required': [
+            parameter['name']
+            for parameter in parameters if parameter.get('required', False)
+        ]
+    }
 
 
 def validate_request():
@@ -63,12 +88,31 @@ def validate_request():
             ...
     """
     def wrapper(fn):
+        def convert_type(string_value):
+            str_value = string_value.decode('utf8')
+            try:
+                return int(string_value)
+            except ValueError:
+                return str_value
+
         @wraps(fn)
         def decorated(*args, **kwargs):
             uri_path = request.url_rule.rule.replace("<", "{").replace(">", "}")
             method = request.method.lower()
             schema = current_app.extensions['oas_schema']
-            validate(request.get_json(), extract_schema(schema, uri_path, method))
+
+            if method == 'get':
+                query = dict(urllib.parse.parse_qsl(request.query_string))
+                query = {
+                    key.decode('utf8'): convert_type(query[key])
+                    for key in query
+                }
+                query_schema = extract_query_schema(schema['paths'][uri_path][method]["parameters"])
+
+                validate(query, query_schema)
+            else:
+                validate(request.get_json(), extract_body_schema(schema, uri_path, method))
+
             return fn(*args, **kwargs)
         return decorated
     return wrapper

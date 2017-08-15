@@ -24,6 +24,23 @@
                         "schema": {}
                     }
                 }
+            },
+            "get": {
+                "operationId": "GET_books",
+                "parameters": [
+                    {
+                        "name": "author",
+                        "in": "query",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "default": {
+                        "description": "",
+                        "schema": {}
+                    }
+                }
             }
         }
     },
