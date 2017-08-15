@@ -60,7 +60,7 @@ def extract_query_schema(parameters):
             for key in parameter_definition if key in schema_keys
         }
 
-    return {
+    schema = {
         'type': 'object',
         'properties': {
             parameter['name']: schema_property(parameter)
@@ -71,6 +71,11 @@ def extract_query_schema(parameters):
             for parameter in parameters if parameter.get('required', False)
         ]
     }
+
+    if len(schema['required']) == 0:
+        del schema['required']
+
+    return schema
 
 
 def validate_request():
@@ -107,9 +112,11 @@ def validate_request():
                     key.decode('utf8'): convert_type(query[key])
                     for key in query
                 }
-                query_schema = extract_query_schema(schema['paths'][uri_path][method]["parameters"])
 
-                validate(query, query_schema)
+                request_parameters = schema['paths'][uri_path][method].get("parameters")
+                if request_parameters:
+                    query_schema = extract_query_schema(request_parameters)
+                    validate(query, query_schema)
             else:
                 validate(request.get_json(), extract_body_schema(schema, uri_path, method))
 
