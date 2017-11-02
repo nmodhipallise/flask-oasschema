@@ -43,7 +43,10 @@ def extract_body_schema(schema, uri_path, method):
     prefix = schema.get("basePath")
     if prefix and uri_path.startswith(prefix):
         uri_path = uri_path[len(prefix):]
-    for parameter in schema['paths'][uri_path][method]["parameters"]:
+    method_parameters = schema['paths'][uri_path][method].get("parameters", [])
+    if not method_parameters:
+        return {}
+    for parameter in method_parameters:
         if parameter.get('in', '') == 'body':
             parameter['schema']['definitions'] = schema['definitions']
             return parameter['schema']
