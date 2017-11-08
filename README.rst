@@ -42,4 +42,8 @@ This library is available through `PyPI <https://pypi.python.org/pypi>`_ as `Fla
 Credit
 ------
 
-This project is a fork of `Matt Wright's <mattupstate>`_ project `Flask-JsonSchema <https://github.com/mattupstate/flask-jsonschema>`_ and thus borrows ideas and code. Difference being that Flask-OASSchema works only with OAS (Swagger) style schema spec as opposed to raw json-schema. This allows Flask-OASSchema to locate schema corresponding to endpoing and method without explicit per endpoint configuration.
+This project is a fork of `Matt Wright's <https://github.com/mattupstate>`_ project `Flask-JsonSchema <https://github.com/mattupstate/flask-jsonschema>`_ and thus borrows ideas and code. Difference being that Flask-OASSchema works only with OAS (Swagger) style schema spec as opposed to raw json-schema. This allows Flask-OASSchema to locate schema corresponding to endpoint and method without explicit per endpoint configuration.
+
+Authors:
+`Dan Baumann <https://github.com/dbaumann>`_
+`Thanavath Jaroenvanit <https://github.com/Thanavath>`_
