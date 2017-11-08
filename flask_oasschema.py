@@ -93,13 +93,6 @@ def validate_request():
             ...
     """
     def wrapper(fn):
-        def convert_type(string_value):
-            str_value = string_value.decode('utf8')
-            try:
-                return int(string_value)
-            except ValueError:
-                return str_value
-
         @wraps(fn)
         def decorated(*args, **kwargs):
             uri_path = request.url_rule.rule.replace("<", "{").replace(">", "}")
@@ -108,11 +101,6 @@ def validate_request():
 
             if method == 'get':
                 query = dict(urllib.parse.parse_qsl(request.query_string))
-                query = {
-                    key.decode('utf8'): convert_type(query[key])
-                    for key in query
-                }
-
                 request_parameters = schema['paths'][uri_path][method].get("parameters")
                 if request_parameters:
                     query_schema = extract_query_schema(request_parameters)
