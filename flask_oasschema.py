@@ -5,10 +5,12 @@
 
     flask_oasschema
 """
+from future.standard_library import install_aliases
+install_aliases()
 
 import os
-
 from functools import wraps
+from urllib.parse import parse_qsl
 
 try:
     import simplejson as json
@@ -17,7 +19,6 @@ except ImportError:
 
 from flask import current_app, request
 from jsonschema import ValidationError, validate
-import urllib
 
 
 class OASSchema(object):
@@ -94,11 +95,7 @@ def validate_request():
     """
     def wrapper(fn):
         def convert_type(string_value):
-            str_value = string_value.decode('utf8')
-            try:
-                return int(string_value)
-            except ValueError:
-                return str_value
+            return string_value.decode('utf8')
 
         @wraps(fn)
         def decorated(*args, **kwargs):
@@ -107,7 +104,7 @@ def validate_request():
             schema = current_app.extensions['oas_schema']
 
             if method == 'get':
-                query = dict(urllib.parse.parse_qsl(request.query_string))
+                query = dict(parse_qsl(request.query_string))
                 query = {
                     key.decode('utf8'): convert_type(query[key])
                     for key in query

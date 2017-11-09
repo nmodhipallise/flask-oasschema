@@ -21,7 +21,11 @@ setup(
     test_suite='nose.collector',
     zip_safe=False,
     platforms='any',
-    install_requires=['Flask>=0.9', 'jsonschema>=1.1.0'],
+    install_requires=[
+        'Flask>=0.9',
+        'jsonschema>=1.1.0',
+        'future>=0.16.0',
+    ],
     tests_require=['nose'],
     classifiers=[
         'Development Status :: 4 - Beta',

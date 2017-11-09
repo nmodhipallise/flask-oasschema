@@ -69,14 +69,14 @@ class JsonSchemaTests(unittest.TestCase):
         )
         self.assertIn(b'success', r.data)
 
-    def test_invalid_get(self):
+    def test_valid_get_numeric_string(self):
         r = client.get(
             '/books/by-title',
             query_string={
-                'title': 1234
+                'title': '1234'
             }
         )
-        self.assertIn(b'error', r.data)
+        self.assertIn(b'success', r.data)
 
     def test_no_param_get(self):
         r = client.get(
