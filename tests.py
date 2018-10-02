@@ -24,6 +24,12 @@ def books_get_author():
     return 'success'
 
 
+@app.route('/books/by-author-in-body', methods=['GET'])
+@validate_request()
+def books_get_author_in_body():
+    return 'success'
+
+
 @app.route('/books/by-title', methods=['GET'])
 @validate_request()
 def books_get_title():
@@ -83,3 +89,14 @@ class JsonSchemaTests(unittest.TestCase):
             '/books/by-author'
         )
         self.assertIn(b'success', r.data)
+
+    def test_valid_json_get(self):
+        r = client.get(
+            '/books/by-author-in-body',
+            content_type='application/json',
+            data=json.dumps({
+                'author': 'Douglas  Adams'
+            })
+        )
+        self.assertIn(b'success', r.data)
+

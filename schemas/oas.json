@@ -63,6 +63,34 @@
           }
         }
       }
+    },
+    "/books/by-author-in-body": {
+      "get": {
+        "operationId": "GET_books_author",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "author": {
+                  "type": "string"
+                }
+              }
+            },
+            "required": [
+              "author"
+            ]
+          }
+        ],
+        "responses": {
+          "default": {
+            "description": "",
+            "schema": {}
+          }
+        }
+      }
     }
   },
   "definitions": {

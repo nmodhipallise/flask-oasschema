@@ -72,7 +72,7 @@ def extract_query_schema(parameters):
         },
         'required': [
             parameter['name']
-            for parameter in parameters if parameter.get('required', False)
+            for parameter in parameters if parameter.get('required', False) and parameter.get('in', '') == 'query'
         ]
     }
 
@@ -114,9 +114,13 @@ def validate_request():
                 }
 
                 request_parameters = schema['paths'][uri_path][method].get("parameters")
-                if request_parameters:
+                request_parameters_type = [request_parameter["in"] for request_parameter in request_parameters]
+                if request_parameters and "query" in request_parameters_type:
                     query_schema = extract_query_schema(request_parameters)
                     validate(query, query_schema)
+                if request_parameters and "body" in request_parameters_type:
+                    body_schema = extract_body_schema(schema, uri_path, method)
+                    validate(request.get_json(), body_schema)
             else:
                 validate(request.get_json(), extract_body_schema(schema, uri_path, method))
 
